@@ -1,0 +1,16 @@
+{% extends 'pages/base.html'%}
+{% block content%}
+<h1 class="row justify-content-center">Money Manager</h1>
+<h4 class="row justify-content-center" style="padding-bottom:10px">{{previousMonth}}/{{currentMonth}}</h4>
+
+<div class="row justify-content-center">
+    <h4 class="row justify-content-center">£{{datesFiltered.0}} / £{{datesFiltered.1}}</h4>
+    <p class="row justify-content-center">Month remaining: £{{remaining}} </p>
+</div>
+
+<div class="row justify-content-center" style="padding:15px">
+    <a href="{% url 'addincome' %}" class= "row justify-content-center" style="text-decoration:none"><button class="row justify-content-center" style="background-color:#09e56f; color:white; font-weight:bold; padding:5px">Add income</button></a>
+    <div style="padding:3px"></div>
+    <a href="{% url 'addexp' %}" class= "row justify-content-center" style="text-decoration:none"><button class= "row justify-content-center" style="background-color:#ff0033; color:white; font-weight:bold; padding:5px" >Add Expenditure</button></a>
+</div>
+{% endblock%}

@@ -1,0 +1,48 @@
+{%extends 'pages/base.html'%}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h1 class="row justify-content-center" style="padding-bottom: 5px">Totals</h1>
+<h2 class="row justify-content-center" style="padding-bottom: 5px">£{{income}} / £{{exp}}</h2>
+<p class="row justify-content-center" style="padding-bottom: 2.5em">Breakdown filter: £{{incomeBreakDown}} / £{{expBreakDown}}</p>
+<div class="form-group row justify-content-center">
+    <form method="post" action="" class="row justify-content-center"> {%csrf_token%}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{{form.date1}}</th>
+                    <th>{{form.date2}}</th>
+                </tr>
+                <tr>
+                    <th>{{form.description}}</th>
+                </tr>
+            </thead>
+        </table>
+        <button type="submit" class="btn btn-info">Search</button>
+    </form>
+
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Type</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for data in filterDateRangeDB %}
+
+    <tr>
+      <td>{{data.date}}</td>
+      <td>{{data.type}}</td>
+      <td>{{data.amount}}</td>
+      <td>{{data.description}}</td>
+    </tr>
+  {% endfor %}
+
+  </tbody>
+</table>
+{% endblock content %}
