@@ -1,5 +1,6 @@
 from django.template import loader
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from banking.models import Transaction
 from Logic.DbQuery import queryDbDateFilter
 import datetime
@@ -36,17 +37,23 @@ def retrieveTransactionDataForMonth():
     return dataIncomeExp
 
 def HomePageView(request):
-    currentMonth = calendar.month_name[datetime.datetime.now().month]
-    previousMonth = calendar.month_name[datetime.datetime.now().date().month - 1]
 
-    datesFiltered = retrieveTransactionDataForMonth()
-    remaining = datesFiltered[0] - datesFiltered[1]
+    if request.user.is_authenticated:
+
+        currentMonth = calendar.month_name[datetime.datetime.now().month]
+        previousMonth = calendar.month_name[datetime.datetime.now().date().month - 1]
+
+        datesFiltered = retrieveTransactionDataForMonth()
+        remaining = datesFiltered[0] - datesFiltered[1]
 
 
-    template = loader.get_template('pages/home.html')
-    context = locals()
-    context['currentMonth'] = currentMonth
-    context['prevousMonth'] = previousMonth
-    context['data'] = datesFiltered
-    context['remaining'] = remaining
-    return HttpResponse(template.render(context, request))
+        template = loader.get_template('pages/home.html')
+        context = locals()
+        context['currentMonth'] = currentMonth
+        context['prevousMonth'] = previousMonth
+        context['data'] = datesFiltered
+        context['remaining'] = remaining
+        return HttpResponse(template.render(context, request))
+
+    return HttpResponseRedirect(reverse('login'))
+
