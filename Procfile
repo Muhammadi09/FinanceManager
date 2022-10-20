@@ -1,1 +1,1 @@
-web: gunicorn MoneyManager.wsgi --log-file -
+waitress-serve --listen=*:8000 MoneyManager.wsgi:application
