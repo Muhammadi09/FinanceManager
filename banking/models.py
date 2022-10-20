@@ -18,7 +18,7 @@ class Transaction(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
-        string_builder = "{0} | {1} | {2}".format(self.date, self.type, self.description)
+        string_builder = "{0} | {1} | {2} | {3}".format(self.date, self.type, self.description, self.user)
         return string_builder
 
     def get_absolute_url(self):

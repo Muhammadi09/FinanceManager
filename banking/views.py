@@ -4,7 +4,7 @@ from django.views.generic import CreateView
 from .models import Transaction
 from .forms import IncomeExpForm, DateForm
 from Logic import DbQuery, TotalsLogic
-
+import datetime
 
 class AddIncomeView(CreateView):
     model = Transaction
@@ -13,6 +13,7 @@ class AddIncomeView(CreateView):
 
     def form_valid(self, form):
         form.instance.type = 'Income'
+        form.instance.user = self.request.user
         return super().form_valid(form)
 
 
@@ -23,20 +24,32 @@ class AddExpView(CreateView):
 
     def form_valid(self, form):
         form.instance.type = 'Expenditure'
+        form.instance.user = self.request.user
         return super().form_valid(form)
 
 
 def TotalsView(request):
+    userId = request.user.pk
     template = loader.get_template('totals.html')
-    dbAllData = DbQuery.getAllData()
+    dbAllData = DbQuery.getAllData(userId)
     incomeExpQuery = DbQuery.queryTotal()
-    income = incomeExpQuery[0]
-    exp = incomeExpQuery[1]
-    date1 = dbAllData[0].date
-    date2 = dbAllData[len(dbAllData) - 1].date
+    income, exp = 0, 0
+    date1 = datetime.date(datetime.datetime.today().year, 1, 1)
+    date2 = datetime.datetime.today().date()
     incomeBreakDown = 0
     expBreakDown = 0
-    filterDateRangeDB = DbQuery.queryDbDateFilter(date1, date2)
+
+
+
+    for data in dbAllData:
+        if data.type == 'Income':
+            income+=data.amount
+        else:
+            exp+=data.amount
+
+
+
+    filterDateRangeDB = DbQuery.queryDbDateFilter(date1, date2, userId)
     # submitbutton = request.POST.get("submit")
 
     # GETTING DATA FROM FORM AND PROCESSINGS
@@ -54,17 +67,17 @@ def TotalsView(request):
             filterDateRangeDB = data
 
         elif description and (date1 and date2):
-            data = TotalsLogic.gatherDBDataWithDesc(DbQuery.queryDbDateFilter(date1, date2), description)
+            data = TotalsLogic.gatherDBDataWithDesc(DbQuery.queryDbDateFilter(date1, date2, userId), description)
             expBreakDown, incomeBreakDown = TotalsLogic.breakdownCosts(expBreakDown, incomeBreakDown, data)
             filterDateRangeDB = data
 
         elif (date1 and date2) and not description:
-            filterDateRangeDB = DbQuery.queryDbDateFilter(date1, date2)
+            filterDateRangeDB = DbQuery.queryDbDateFilter(date1, date2, userId)
 
             expBreakDown, incomeBreakDown = TotalsLogic.breakdownCosts(expBreakDown, incomeBreakDown, filterDateRangeDB)
 
         else:
-            filterDateRangeDB = DbQuery.getAllData()
+            filterDateRangeDB = DbQuery.getAllData(userId)
 
     context = {
         'form': form,

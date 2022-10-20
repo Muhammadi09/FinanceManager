@@ -1,14 +1,26 @@
 from banking.models import Transaction
 
-def getAllData():
+def getAllData(userId):
     model = Transaction
     query = model.objects.all()
-    return query
+    filteredData = []
 
-def queryDbDateFilter(d1, d2):
+    for data in query:
+        if data.user.pk == userId:
+            filteredData.append(data)
+
+    return filteredData
+
+def queryDbDateFilter(d1, d2, userId):
     model = Transaction
     query = model.objects.filter(date__range=[d1, d2])
-    return query
+    filteredData = []
+
+    for data in query:
+        if data.user.pk == userId:
+            filteredData.append(data)
+
+    return filteredData
 
 def queryTotal():
     model = Transaction

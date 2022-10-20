@@ -2,7 +2,7 @@ def gatherDBDataWithDesc(DB, description):
     gatherTransaction = []
 
     for data in DB:
-        if data.description.strip() == description.strip():
+        if data.description.strip().lower() == description.strip().lower():
             gatherTransaction.append(data)
 
     return gatherTransaction
